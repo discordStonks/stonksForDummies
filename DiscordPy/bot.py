@@ -12,12 +12,16 @@ bot = commands.Bot(command_prefix='$')
 
 @bot.command(name = 'stonk')
 async def nine_nine(ctx, *arg):
-    if(len(arg) == 1):
+    try:
         stock = yf.Ticker(arg[0])
-        response = stock.info.get("ask")
-        await ctx.send(response)
-    else:
-        stock = yf.Ticker(arg[0])
-        response = stock.info.get(arg[1])
+        data = stock.info['ask']
+        if (len(arg) == 1):
+            await ctx.send(data)
+        else:
+            response = stock.info.get(arg[1])
+            await ctx.send(response)
+    except IndexError:
+        data = 'null'
+        response = "I can't find your ticker. Sorry :( "
         await ctx.send(response)
 bot.run(TOKEN)
