@@ -1,0 +1,51 @@
+body	{
+	background-color: #000000;
+	font-family: Courier;
+	color: #DCDCDC;
+}
+
+h1	{
+	text-align: center;
+	font-size: 60px;
+	font-family: Courier;
+	color: #00FF00;
+}
+
+h2	{
+	text-align: center;
+	font-size: 30px;
+	font-family: Courier;
+	color: #FF00FF;
+	padding: 15px;
+}
+
+h3	{
+	font-size: 20px;
+	color: #00FFFF;
+}
+
+p	{
+	text-align: center;
+}
+
+#container	{
+	display: table;
+	width: 500px;
+	margin: 0 auto;
+	border: 2px #ffffff;
+	padding-bottom: 20px;
+}
+
+#compinf	{
+	width: 300px;
+	float: left;
+	margin: 5px;
+}
+
+#tradeinf	{
+	margin-left: 300px;
+}
+
+.clear {
+      clear: both;
+    }
