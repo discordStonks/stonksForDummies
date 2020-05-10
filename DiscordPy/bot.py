@@ -11,6 +11,32 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 bot = commands.Bot(command_prefix='$')
 bot.remove_command('help')
 
+def get3Digits(num, digits):
+    numString = str(num)
+    digitString = ''
+    i = 0
+    while i < digits:
+        digitString = digitString + numString[i]
+        if(numString[i] == '.'):
+            digits = digits + 1
+        i = i + 1
+    return digitString
+
+def convertNum(num):
+    if((float(num)/1000000) < 999 and (float(num)/1000000) > 1):
+        digits = (float(num)/1000000)
+        val = get3Digits(digits, 3) + 'M'
+    elif((float(num)/1000000000) < 999 and (float(num)/1000000000) > 1):
+        digits = (float(num) / 1000000000)
+        val = get3Digits(digits, 3) + 'B'
+    elif((float(num)/1000000000000) < 999 and (float(num)/1000000000000) > 1):
+        digits = (float(num) / 1000000000000)
+        val = get3Digits(digits, 3) + 'T'
+    else:
+        return num
+    return val
+
+
 @bot.command(name = 'stonk')
 async def getTickerData(ctx, *arg):
     try:
@@ -19,7 +45,7 @@ async def getTickerData(ctx, *arg):
         if (len(arg) == 1):
             await ctx.send(data)
         else:
-            response = stock.info.get(arg[1])
+            response = convertNum(stock.info.get(arg[1]))
             await ctx.send(response)
     except IndexError:
         data = 'null'
