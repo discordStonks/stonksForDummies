@@ -3,6 +3,7 @@ import os
 import random
 import yfinance as yf
 import praw
+import datetime
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -18,6 +19,7 @@ bot.remove_command('help')
 
 subreddit = r.subreddit('wallstreetbets')
 imageList = []
+prev_time = datetime.datetime.now()
 
 def get3Digits(num, digits):
     numString = str(num)
@@ -70,11 +72,12 @@ async def getHelp(ctx, *arg):
 
 @bot.command(name='meme')
 async def getMeme(ctx, *arg):
-    if (len(imageList) == 0):
-        hot_python = subreddit.new(limit=20)
+    delta_time = datetime.datetime.now() - prev_time
+    delta_seconds = delta_time.total_seconds()
+    if (len(imageList) == 0 or delta_seconds >= 60):
+        hot_python = subreddit.new(limit=100)
         for i in hot_python:
-            extension = i.url[-3:]
-            if (extension == "jpg"):
+            if i.link_flair_text in {"Meme", "Loss", "Shitpost"} and i.url[-3:] in {"jpg", "png"}:
                 imageList.append(i.url)
     val = random.randint(0, len(imageList) - 1)
     response = imageList[val]
