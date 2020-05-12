@@ -2,14 +2,22 @@
 import os
 import random
 import yfinance as yf
+import praw
 from discord.ext import commands
 from dotenv import load_dotenv
+
+r = praw.Reddit(client_id='Insert-ClientID',
+                client_secret='Insert-ClientSecret',
+                user_agent='Insert-User-Agent')
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
 bot = commands.Bot(command_prefix='$')
 bot.remove_command('help')
+
+subreddit = r.subreddit('wallstreetbets')
+imageList = []
 
 def get3Digits(num, digits):
     numString = str(num)
@@ -58,6 +66,18 @@ async def getHelp(ctx, *arg):
                "'longBusinessSummary', 'website', 'previousClose', 'open', 'dayHigh', 'dayLow', \n" \
                "'marketCap', 'profitMargins', 'shortRatio', 'heldPercentInstitutions', \n" \
                "Go to [Insert Website] to see more commmands. \n"
+    await ctx.send(response)
+
+@bot.command(name='meme')
+async def getMeme(ctx, *arg):
+    if (len(imageList) == 0):
+        hot_python = subreddit.new(limit=20)
+        for i in hot_python:
+            extension = i.url[-3:]
+            if (extension == "jpg"):
+                imageList.append(i.url)
+    val = random.randint(0, len(imageList) - 1)
+    response = imageList[val]
     await ctx.send(response)
 
 bot.run(TOKEN)
