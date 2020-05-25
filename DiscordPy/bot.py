@@ -4,6 +4,8 @@ import random
 import yfinance as yf
 import praw
 import datetime
+import discord
+import matplotlib.pyplot as plt
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -53,11 +55,47 @@ async def getTickerData(ctx, *arg):
     try:
         stock = yf.Ticker(arg[0])
         data = stock.info['ask']
+        hist = stock.history(period="1d", interval="1m")
+
+        openPrices = hist["Open"]
+        plt.clf()
+        plt.plot(openPrices)
+        plt.ylabel('Price')
+        plt.xlabel('Date')
+        plt.title('Today $' + arg[0])
+        plt.savefig('stonk.png')
+
         if (len(arg) == 1):
-            await ctx.send(data)
+            await ctx.channel.send(data, file=discord.File('stonk.png'))
         else:
             response = convertNum(stock.info.get(arg[1]))
-            await ctx.send(response)
+            await ctx.channel.send(response, file=discord.File('stonk.png'))
+    except IndexError:
+        data = 'null'
+        response = "I can't find your ticker. Sorry :( "
+        await ctx.send(response)
+
+@bot.command(name = 'history')
+async def getHistory(ctx, *arg):
+    try:
+        stock = yf.Ticker(arg[0])               #Get the stock ticker
+
+        if (len(arg) == 1):                     #Default period will be 1year unless user state otherwise
+            hist = stock.history(period="1y")
+            time = "1y"
+        else:
+            hist = stock.history(period=arg[1])
+            time = arg[1]
+
+        openPrices = hist["Open"]               #Use matplot to plot the data
+        plt.clf()
+        plt.plot(openPrices)
+        plt.ylabel('Price')
+        plt.xlabel('Date')
+        plt.title(time + ' History of $' + arg[0])
+        plt.savefig('stonk.png')
+        await ctx.channel.send(file=discord.File('stonk.png'))
+
     except IndexError:
         data = 'null'
         response = "I can't find your ticker. Sorry :( "
